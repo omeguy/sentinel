@@ -100,7 +100,7 @@ services:
 
 networks:
   tracy_bridge:
-    external: true
+    driver: bridge
 
 
 volumes:
