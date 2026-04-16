@@ -17,6 +17,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
+
+
     depends_on:
       orchestrator-mysql:
         condition: service_healthy
@@ -96,6 +98,21 @@ services:
       interval: 5s
       timeout: 3s
       retries: 20
+
+  sentinel-ui:
+    image: python:3.9-slim
+    container_name: sentinel-ui
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "8501:8501"
+
+    depends_on:
+      - orchestrator
+    command: sh -c "pip install streamlit requests && streamlit run app_frontend.py --server.address 0.0.0.0"
+    networks:
+      - tracy_bridge
 
 
 networks:
