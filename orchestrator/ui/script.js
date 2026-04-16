@@ -1,4 +1,4 @@
-const API_BASE = "http://40.124.81.146:9000";
+const API_BASE = "";
 
 window.onload = () => {
     document.getElementById('api-key').value = localStorage.getItem('tracy_api_key') || "";

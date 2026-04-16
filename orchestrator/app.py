@@ -15,7 +15,6 @@ import logging
 from typing import Any, Dict, Literal
 
 from fastapi import FastAPI, HTTPException, Query, Path, Request
-from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 from fastapi.openapi.utils import get_openapi
@@ -25,7 +24,8 @@ from schema import init_schema
 from docker_ops import DockerOps
 from bot_service import BotService, BotCreateRequest
 
-
+from fastapi.staticfiles import StaticFiles # Needed to serve CSS/JS
+from fastapi.responses import JSONResponse, FileResponse, HTMLResponse # Added File/HTMLResponse
 # ---------------------- startup validation ----------------------
 
 def _require_fernet_key() -> None:
@@ -63,6 +63,15 @@ app = FastAPI(
     version="1.0.0",
     swagger_ui_parameters={"persistAuthorization": True},
 )
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows your UI on port 80 to talk to this API
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows GET, POST, OPTIONS, etc.
+    allow_headers=["*"],  # Allows x-api-key and Content-Type
+)
+# -------------------------------------------------------------
 
 
 def custom_openapi():
@@ -363,3 +372,19 @@ def upload_strategy(
         )
     except Exception as e:
         raise _http_error_from_exc(e)
+
+
+# --- SERVE THE UI ---
+
+# 1. This tells FastAPI to look into the "sentinal-ui" folder for your assets
+# It assumes your HTML/CSS/JS are in a folder named 'sentinal-ui'
+if os.path.exists("sentinal-ui"):
+    app.mount("/static", StaticFiles(directory="sentinal-ui"), name="static")
+
+# 2. This serves your index.html when you visit http://40.124.81.146:9000/
+@app.get("/", response_class=HTMLResponse)
+async def read_index():
+    index_path = os.path.join("sentinal-ui", "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    return HTMLResponse("UI folder 'sentinal-ui' not found. Check your directory structure.")
