@@ -1,0 +1,14 @@
+services:
+  sentinel-frontend:
+    image: nginx:alpine
+    container_name: sentinel-frontend
+    ports:
+      - "80:80"  # Access the UI via http://40.124.81.146
+    volumes:
+      - .:/usr/share/nginx/html:ro # Mounts your current folder into Nginx
+    networks:
+      - sentinel-network
+
+networks:
+  sentinel-network:
+    external: true # Join the existing network your API uses

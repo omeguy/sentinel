@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracy Sentinel Control</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <header class="top-nav">
+        <div class="brand">
+            <h1>Tracy Orchestrator</h1>
+        </div>
+        <div class="auth-settings">
+            <div class="input-group">
+                <label>API KEY</label>
+                <input type="password" id="api-key" placeholder="••••••••">
+            </div>
+            <div class="input-group">
+                <label>USER ID</label>
+                <input type="text" id="user-id" placeholder="tega">
+            </div>
+            <button onclick="saveCredentials()" class="btn-save">Save Credentials</button>
+        </div>
+    </header>
+
+    <main class="dashboard">
+        <div class="app-grid">
+            <div class="tile" onclick="runHealth()"><i data-lucide="activity"></i><span>System Health</span></div>
+            <div class="tile" onclick="runEnsureDB()"><i data-lucide="database"></i><span>Ensure DB</span></div>
+            <div class="tile primary" onclick="openForm('create')"><i data-lucide="plus-circle"></i><span>Create Bot</span></div>
+            <div class="tile" onclick="openForm('status')"><i data-lucide="bar-chart-3"></i><span>Bot Status</span></div>
+            <div class="tile" onclick="openForm('start')"><i data-lucide="play"></i><span>Start Engine</span></div>
+            <div class="tile" onclick="openForm('stop')"><i data-lucide="square"></i><span>Stop Engine</span></div>
+            <div class="tile" onclick="openForm('logs')"><i data-lucide="file-text"></i><span>View Logs</span></div>
+            <div class="tile" onclick="openForm('vnc')"><i data-lucide="monitor"></i><span>Toggle NoVNC</span></div>
+        </div>
+
+        <section id="work-area" class="work-section hidden">
+            <div class="work-card">
+                <div class="work-header">
+                    <h2 id="work-title">Action Configuration</h2>
+                    <button onclick="closeWorkArea()" class="btn-close">×</button>
+                </div>
+                <div id="work-body"></div>
+                <div class="work-footer">
+                    <button id="work-confirm" class="btn-primary">Execute Command</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="output-section">
+            <div class="output-header">
+                <span>Terminal Output</span>
+                <button onclick="clearOutput()">Clear</button>
+            </div>
+            <pre id="json-output">// System Ready. Awaiting instructions...</pre>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>
