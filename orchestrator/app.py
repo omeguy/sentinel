@@ -25,7 +25,10 @@ from docker_ops import DockerOps
 from bot_service import BotService, BotCreateRequest
 
 from fastapi.staticfiles import StaticFiles # Needed to serve CSS/JS
-from fastapi.responses import JSONResponse, FileResponse, HTMLResponse # Added File/HTMLResponse
+from fastapi.responses import JSONResponse, FileResponse, HTMLResponse 
+
+from fastapi.middleware.cors import CORSMiddleware
+
 # ---------------------- startup validation ----------------------
 
 def _require_fernet_key() -> None:
