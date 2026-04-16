@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+docker
+requests
+mysql-connector-python
+python-dotenv
+cryptography

@@ -1,0 +1,96 @@
+services:
+
+  orchestrator:
+    image: sentinel:latest
+    container_name: orchestrator
+    ports:
+      - "9000:9000"
+
+    env_file:
+      - .env
+
+    environment:
+      DB_HOST: orchestrator-mysql
+      DB_PORT: 3306
+      ENABLE_DOCKER: "true"
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    depends_on:
+      orchestrator-mysql:
+        condition: service_healthy
+      tracy-mysql:
+        condition: service_healthy
+
+    networks:
+      - tracy_bridge
+
+
+  orchestrator-mysql:
+    image: mysql:8.0
+    container_name: orchestrator-mysql
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: orchestrator
+
+    ports:
+      - "3307:3306"
+
+    volumes:
+      - orchestrator-mysql-data:/var/lib/mysql
+
+    networks:
+      - tracy_bridge
+
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -proot || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+
+  tracy-mysql:
+    image: mysql:8.0
+    container_name: tracy-mysql
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bot_registry
+
+    ports:
+      - "3308:3306"
+
+    volumes:
+      - tracy-mysql-data:/var/lib/mysql
+
+    networks:
+      - tracy_bridge
+
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -proot || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+
+  tracy-redis:
+    image: redis:7-alpine
+    container_name: tracy-redis
+
+    ports:
+      - "6379:6379"
+
+    networks:
+      - tracy_bridge
+
+
+networks:
+  tracy_bridge:
+    external: true
+
+
+volumes:
+  orchestrator-mysql-data:
+  tracy-mysql-data:
