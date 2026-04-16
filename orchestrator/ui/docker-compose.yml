@@ -3,13 +3,12 @@ services:
     image: nginx:alpine
     container_name: sentinel-frontend
     ports:
-      - "80:80"  # Access the UI via http://40.124.81.146
+      - "80:80"
     volumes:
-      - .:/usr/share/nginx/html:ro # Mounts your current folder into Nginx
+      - .:/usr/share/nginx/html:ro
     networks:
       - sentinel-network
 
 networks:
   sentinel-network:
-    name: sentinal-network
-    external: bridge
+    driver: bridge  # <--- Change 'external: true' to this
