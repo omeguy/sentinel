@@ -375,16 +375,17 @@ def upload_strategy(
 
 
 # --- SERVE THE UI ---
+# This looks for the 'ui' folder inside the 'orchestrator' directory
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UI_PATH = os.path.join(BASE_DIR, "ui")
 
-# 1. This tells FastAPI to look into the "sentinal-ui" folder for your assets
-# It assumes your HTML/CSS/JS are in a folder named 'sentinal-ui'
-if os.path.exists("ui"):
-    app.mount("/static", StaticFiles(directory="ui"), name="static")
+if os.path.exists(UI_PATH):
+    app.mount("/static", StaticFiles(directory=UI_PATH), name="static")
 
-# 2. This serves your index.html when you visit http://40.124.81.146:9000/
 @app.get("/", response_class=HTMLResponse)
 async def read_index():
-    index_path = os.path.join("ui", "index.html")
-    if os.path.exists(index_path):
-        return FileResponse(index_path)
-    return HTMLResponse("UI folder 'ui' not found. Check your directory structure.")
+    index_file = os.path.join(UI_PATH, "index.html")
+    if os.path.exists(index_file):
+        return FileResponse(index_file)
+    return HTMLResponse(f"Error: UI folder not found at {UI_PATH}")
